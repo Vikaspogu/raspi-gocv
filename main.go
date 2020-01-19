@@ -2,13 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"strconv"
-
 	"github.com/hybridgroup/mjpeg"
 	"gocv.io/x/gocv"
+	"log"
+	"net/http"
 )
 
 var (
@@ -19,17 +16,8 @@ var (
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Println("How to run:\n\tmjpeg-streamer [camera ID] [host:port]")
-		return
-	}
-
-	// parse args
-	deviceID, _ = strconv.Atoi(os.Args[1])
-	host := os.Args[2]
-
 	// open webcam
-	webcam, err = gocv.VideoCaptureDevice(deviceID)
+	webcam, err = gocv.VideoCaptureDevice(0)
 	if err != nil {
 		fmt.Printf("error opening video capture device: %v\n", deviceID)
 		return
@@ -42,11 +30,11 @@ func main() {
 	// start capturing
 	go capture()
 
-	fmt.Println("Capturing. Point your browser to " + host)
+	fmt.Println("Capturing....")
 
 	// start http server
 	http.Handle("/", stream)
-	log.Fatal(http.ListenAndServe(host, nil))
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func capture() {

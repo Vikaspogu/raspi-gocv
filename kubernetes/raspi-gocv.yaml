@@ -1,0 +1,64 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: raspi-gocv
+  labels:
+    app: raspi-gocv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: raspi-gocv
+  template:
+    metadata:
+      labels:
+        app: raspi-gocv
+    spec:
+      nodeSelector:
+        k3s.io/hostname: pi-node1
+      containers:
+        - name: raspi-gocv
+          image: docker.io/vikaspogu/raspi-gocv:latest
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+            - name: web
+              containerPort: 8080
+          volumeMounts:
+            - mountPath: /dev/video0
+              name: dev-snd
+          securityContext:
+            privileged: true
+      volumes:
+        - name: dev-snd
+          hostPath:
+            path: /dev/video0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: raspi-gocv-web-ui
+spec:
+  selector:
+    app: traefik
+  ports:
+    - name: admin
+      port: 80
+      targetPort: 8080
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: raspi-gocv-web-ui
+spec:
+  rules:
+    - host: raspi-gocv.homenet.vikaspogu.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: raspi-gocv-web-ui
+              servicePort: admin
