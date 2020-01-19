@@ -2,24 +2,24 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: raspi-gocv
+  name: rpi-node-cm
   labels:
-    app: raspi-gocv
+    app: rpi-node-cm
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: raspi-gocv
+      app: rpi-node-cm
   template:
     metadata:
       labels:
-        app: raspi-gocv
+        app: rpi-node-cm
     spec:
       nodeSelector:
         k3s.io/hostname: pi-node1
       containers:
-        - name: raspi-gocv
-          image: docker.io/vikaspogu/raspi-gocv:latest
+        - name: rpi-node-cm
+          image: docker.io/vikaspogu/rpi-node-cm:latest
           ports:
             - name: http
               containerPort: 80
@@ -40,10 +40,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: raspi-gocv-web-ui
+  name: rpi-node-cm-web-ui
 spec:
   selector:
-    app: traefik
+    app: rpi-node-cm
   ports:
     - name: admin
       port: 80
@@ -52,13 +52,13 @@ spec:
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: raspi-gocv-web-ui
+  name: rpi-node-cm-web-ui
 spec:
   rules:
-    - host: raspi-gocv.homenet.vikaspogu.com
+    - host: rpi-cm.homenet.vikaspogu.com
       http:
         paths:
           - path: /
             backend:
-              serviceName: raspi-gocv-web-ui
+              serviceName: rpi-node-cm-web-ui
               servicePort: admin
