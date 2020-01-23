@@ -26,7 +26,7 @@ func main() {
 	r := gin.Default()
 
 	// open cam
-	cam, err = gocv.VideoCaptureDevice(0)
+	cam, err = gocv.OpenVideoCapture(0)
 	if err != nil {
 		fmt.Printf("error opening video capture device: %v\n", deviceID)
 		return
@@ -48,8 +48,9 @@ func main() {
 	authorized.GET("/", func(c *gin.Context) {
 		stream.ServeHTTP(c.Writer, c.Request)
 	})
+
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	_ = r.Run()
+	_ = r.Run(":8080")
 }
 
 func capture() {
