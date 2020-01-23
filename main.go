@@ -24,9 +24,9 @@ const MinimumArea = 3000
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	
+
 	// open cam
-	cam, err = gocv.OpenVideoCapture(0)
+	cam, err = gocv.VideoCaptureDevice(0)
 	if err != nil {
 		fmt.Printf("error opening video capture device: %v\n", deviceID)
 		return
