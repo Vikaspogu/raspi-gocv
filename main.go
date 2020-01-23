@@ -24,7 +24,6 @@ const MinimumArea = 3000
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
-	log.Info("open camera....")
 	// open cam
 	cam, err = gocv.OpenVideoCapture(0)
 	if err != nil {
@@ -32,8 +31,7 @@ func main() {
 		return
 	}
 	defer cam.Close()
-	
-	log.Info("camera opened....")
+
 	// create the mjpeg stream
 	stream = mjpeg.NewStream()
 
@@ -45,13 +43,14 @@ func main() {
 	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
 		os.Getenv("user"): os.Getenv("password"),
 	}))
-
+	log.Info("Capturing....1")
 	authorized.GET("/", func(c *gin.Context) {
 		stream.ServeHTTP(c.Writer, c.Request)
 	})
-
+	log.Info("Capturing....2")
 	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	_ = r.Run(":8080")
+	log.Info("Capturing....3")
+	_ = r.Run("0.0.0.0:8080")
 }
 
 func capture() {
