@@ -9,7 +9,7 @@ import (
 	"gocv.io/x/gocv"
 	"image"
 	"image/color"
-	"os"
+	"net/http"
 )
 
 var (
@@ -40,17 +40,18 @@ func main() {
 
 	log.Info("Capturing....")
 
-	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-		os.Getenv("user"): os.Getenv("password"),
-	}))
-	log.Info("Capturing....1")
-	authorized.GET("/", func(c *gin.Context) {
-		stream.ServeHTTP(c.Writer, c.Request)
-	})
-	log.Info("Capturing....2")
-	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	log.Info("Capturing....3")
-	_ = r.Run("0.0.0.0:8080")
+	//authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
+	//	os.Getenv("user"): os.Getenv("password"),
+	//}))
+	//authorized.GET("/", func(c *gin.Context) {
+	//	stream.ServeHTTP(c.Writer, c.Request)
+	//})
+	//r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	//_ = r.Run("0.0.0.0:8080")
+	// start http server
+	http.Handle("/", stream)
+	http.Handle("/metrics", promhttp.Handler())
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
 
 func capture() {
