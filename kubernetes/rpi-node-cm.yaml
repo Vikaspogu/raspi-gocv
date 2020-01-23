@@ -20,6 +20,17 @@ spec:
       containers:
         - name: rpi-node-cm
           image: docker.io/vikaspogu/rpi-node-cm:latest
+          env:
+            - name: user
+              valueFrom:
+                secretKeyRef:
+                  name: userinfo
+                  key: user
+            - name: password
+              valueFrom:
+                secretKeyRef:
+                  name: userinfo
+                  key: password
           ports:
             - name: http
               containerPort: 80

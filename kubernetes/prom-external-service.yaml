@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: rpi-node-cm-web-ui
+  namespace: monitoring
+spec:
+  type: ExternalName
+  externalName: rpi-node-cm-web-ui.raspi-gocv.svc.cluster.local
+  ports:
+    - port: 8080
