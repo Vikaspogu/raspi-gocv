@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/hybridgroup/mjpeg"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -22,8 +21,8 @@ var (
 const MinimumArea = 3000
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
-	r := gin.Default()
+	//gin.SetMode(gin.ReleaseMode)
+	//r := gin.Default()
 	// open cam
 	cam, err = gocv.OpenVideoCapture(0)
 	if err != nil {
