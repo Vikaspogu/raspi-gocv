@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/hybridgroup/mjpeg"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 	"gocv.io/x/gocv"
 	"image"
 	"image/color"
-	"net/http"
+	"os"
 )
 
 var (
@@ -21,10 +22,11 @@ var (
 const MinimumArea = 3000
 
 func main() {
-	//gin.SetMode(gin.ReleaseMode)
-	//r := gin.Default()
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.Default()
+	deviceID := os.Getenv("deviceID")
 	// open cam
-	cam, err = gocv.OpenVideoCapture(0)
+	cam, err = gocv.OpenVideoCapture(deviceID)
 	if err != nil {
 		fmt.Printf("error opening video capture device: %v\n", deviceID)
 		return
@@ -39,18 +41,14 @@ func main() {
 
 	log.Info("Capturing....")
 
-	//authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-	//	os.Getenv("user"): os.Getenv("password"),
-	//}))
-	//authorized.GET("/", func(c *gin.Context) {
-	//	stream.ServeHTTP(c.Writer, c.Request)
-	//})
-	//r.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	//_ = r.Run("0.0.0.0:8080")
-	// start http server
-	http.Handle("/", stream)
-	http.Handle("/metrics", promhttp.Handler())
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
+		os.Getenv("user"): os.Getenv("password"),
+	}))
+	authorized.GET("/", func(c *gin.Context) {
+		stream.ServeHTTP(c.Writer, c.Request)
+	})
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+	_ = r.Run("0.0.0.0:8080")
 }
 
 func capture() {
