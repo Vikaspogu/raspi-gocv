@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+
 	"github.com/hybridgroup/mjpeg"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
@@ -10,6 +11,7 @@ import (
 	"image"
 	"image/color"
 	"os"
+	"raspi-gocv/vault"
 )
 
 var (
@@ -19,7 +21,12 @@ var (
 	stream   *mjpeg.Stream
 )
 
-const MinimumArea = 3000
+const (MinimumArea = 3000)
+
+var (
+	username string
+	password string
+)
 
 func main() {
 	gin.SetMode(gin.ReleaseMode)
@@ -41,8 +48,10 @@ func main() {
 
 	log.Info("Capturing....")
 
+	username, password = vault.ReadSecret("secret/data/demo/userinfo")
+
 	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-		os.Getenv("user"): os.Getenv("password"),
+		username: password,
 	}))
 	authorized.GET("/", func(c *gin.Context) {
 		stream.ServeHTTP(c.Writer, c.Request)
