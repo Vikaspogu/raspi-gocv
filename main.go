@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/hybridgroup/mjpeg"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -34,7 +33,7 @@ func main() {
 	// open cam
 	cam, err = gocv.OpenVideoCapture(deviceID)
 	if err != nil {
-		fmt.Printf("error opening video capture device: %v\n", deviceID)
+		log.Info("error opening video capture device: %v\n", deviceID)
 		return
 	}
 	defer cam.Close()
@@ -74,10 +73,10 @@ func capture() {
 
 	status := "Ready"
 
-	fmt.Printf("Start reading device: %v\n", deviceID)
+	log.Info("Start reading device: %v\n", deviceID)
 	for {
 		if ok := cam.Read(&img); !ok {
-			fmt.Printf("Device closed: %v\n", deviceID)
+			log.Info("Device closed: %v\n", deviceID)
 			return
 		}
 		if img.Empty() {
