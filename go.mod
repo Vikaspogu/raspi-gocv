@@ -3,7 +3,7 @@ module raspi-gocv
 go 1.13
 
 require (
-	github.com/gin-gonic/gin v1.5.0 // indirect
+	github.com/gin-gonic/gin v1.5.0
 	github.com/go-playground/universal-translator v0.17.0 // indirect
 	github.com/hashicorp/go-retryablehttp v0.6.4 // indirect
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect

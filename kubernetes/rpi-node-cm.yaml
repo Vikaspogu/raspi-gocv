@@ -31,6 +31,10 @@ spec:
                 secretKeyRef:
                   name: userinfo
                   key: password
+            - name: VAULT_ADDR
+              value: "http://vault.vault.svc.cluster.local:8200"
+            - name: TOKEN
+              value: /var/run/secrets/kubernetes.io/serviceaccount/token
           ports:
             - name: http
               containerPort: 80
@@ -48,8 +52,7 @@ spec:
           volumeMounts:
             - mountPath: /dev/video0
               name: dev-snd
-          securityContext:
-            privileged: true
+          securityContext: {}
       volumes:
         - name: dev-snd
           hostPath:
