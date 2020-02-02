@@ -23,7 +23,7 @@ spec:
 """
   ) {
 
-  node(POD_LABEL) {
+  node('kaniko') {
     stage('Build with Kaniko') {
       checkout scm
       container('kaniko') {
