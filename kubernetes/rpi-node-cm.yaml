@@ -24,16 +24,11 @@ spec:
         - name: rpi-node-cm
           image: docker.io/vikaspogu/rpi-node-cm:latest
           env:
-            - name: user
-              valueFrom:
-                secretKeyRef:
-                  name: userinfo
-                  key: user
-            - name: password
-              valueFrom:
-                secretKeyRef:
-                  name: userinfo
-                  key: password
+#            - name: TOKEN
+#              valueFrom:
+#                secretKeyRef:
+#                  name: vault-token
+#                  key: token
             - name: DISPLAY
               value: ':0'
             - name: deviceID
@@ -41,7 +36,7 @@ spec:
             - name: VAULT_ADDR
               value: "http://vault.vault.svc.cluster.local:8200"
             - name: TOKEN
-              value: /var/run/secrets/kubernetes.io/serviceaccount/token
+              value: '/var/run/secrets/kubernetes.io/serviceaccount/token'
           ports:
             - name: http
               containerPort: 80
