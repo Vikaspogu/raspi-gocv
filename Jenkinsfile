@@ -16,6 +16,8 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /root/.docker
+      - name: qemu-arm
+        mountPath: /usr/bin/qemu-arm
     env:
       - name: DOCKER_HOST
         value: tcp://localhost:2375
@@ -35,6 +37,9 @@ spec:
           items:
             - key: .dockerconfigjson
               path: config.json
+  - name: qemu-arm
+    hostPath:
+      path: /usr/bin/qemu-arm
 ''') {
   node(POD_LABEL) {
     stage('build image') {
