@@ -7,8 +7,6 @@ spec:
   containers:
   - name: docker
     image: docker:19.03.1
-    securityContext:
-      privileged: true
     command:
     - sleep
     args:
@@ -16,8 +14,6 @@ spec:
     volumeMounts:
       - name: jenkins-docker-cfg
         mountPath: /root/.docker
-      - name: qemu-arm
-        mountPath: /usr/bin/qemu-arm
     env:
       - name: DOCKER_HOST
         value: tcp://localhost:2375
@@ -37,14 +33,12 @@ spec:
           items:
             - key: .dockerconfigjson
               path: config.json
-  - name: qemu-arm
-    hostPath:
-      path: /usr/bin/qemu-arm
 ''') {
   node(POD_LABEL) {
     stage('build image') {
       checkout scm
       container('docker') {
+          sh 'docker run --rm --privileged multiarch/qemu-user-static:register --reset'
           sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
