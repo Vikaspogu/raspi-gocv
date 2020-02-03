@@ -38,7 +38,12 @@ spec:
     stage('build image') {
       container('docker') {
           checkout scm
-          sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
+          sh 'mkdir -p ~/.docker/cli-plugins &&
+              BUILDX_URL=$(curl https://api.github.com/repos/docker/buildx/releases/latest | jq -r '.assets[].browser_download_url' | grep arm64) &&
+              wget $BUILDX_URL -O ~/.docker/cli-plugins/docker-buildx &&
+              chmod +x ~/.docker/cli-plugins/docker-buildx'
+          sh 'docker buildx --help '
+          sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker buildx build --platform linux/amd64,linux/arm64 -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
     stage('push image') {
