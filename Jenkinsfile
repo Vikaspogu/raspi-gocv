@@ -1,16 +1,33 @@
-podTemplate(yaml: """
+podTemplate(yaml: '''
+apiVersion: v1
 kind: Pod
 spec:
+  nodeSelector:
+    k3s.io/hostname: hp-mini
   containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug-539ddefcae3fd6b411a95982a830d987f4214251
-    imagePullPolicy: Always
+  - name: docker
+    image: docker:19.03.1
     command:
-    - /busybox/cat
-    tty: true
+    - sleep
+    args:
+    - 99d
     volumeMounts:
       - name: jenkins-docker-cfg
-        mountPath: /kaniko/.docker
+        mountPath: /root/.docker
+    env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2375
+  - name: docker-daemon
+    image: docker:19.03.1-dind
+    securityContext:
+      privileged: true
+    env:
+      - name: DOCKER_TLS_CERTDIR
+        value: ""
+  - name: golang
+    image: golang:1.8.0
+    command: ['cat']
+    tty: true
   volumes:
   - name: jenkins-docker-cfg
     projected:
@@ -20,14 +37,22 @@ spec:
           items:
             - key: .dockerconfigjson
               path: config.json
-"""
-  ) {
-
-  node('kaniko') {
-    stage('Build with Kaniko') {
-      checkout scm
-      container('kaniko') {
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=docker.io/vikaspogu/rpi-node-cm'
+''') {
+  node(POD_LABEL) {
+    stage ('build app'){
+       checkout scm
+         container('golang'){
+           sh 'cd `pwd` && go build -o main .'
+         }
+    }
+    stage('build image') {
+      container('docker') {
+          sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
+      }
+    }
+    stage('push image') {
+      container('docker') {
+          sh 'DOCKER_BUILDKIT=1 docker push docker.io/vikaspogu/rpi-node-cm'
       }
     }
   }
