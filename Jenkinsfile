@@ -38,12 +38,7 @@ spec:
     stage('build image') {
       container('docker') {
           checkout scm
-          sh 'docker buildx --help'
-          sh 'mkdir -p ~/.docker/cli-plugins && \
-              BUILDX_URL=$(curl "https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-arm64") && \
-              wget $BUILDX_URL -O ~/.docker/cli-plugins/docker-buildx && \
-              chmod +x ~/.docker/cli-plugins/docker-buildx'
-          sh 'docker buildx --help'
+          sh 'docker buildx build --help'
           sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker buildx build --platform linux/amd64,linux/arm64 -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
