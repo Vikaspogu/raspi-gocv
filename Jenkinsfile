@@ -38,7 +38,8 @@ spec:
     stage('build image') {
       container('docker') {
           checkout scm
-          sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
+          sh 'export DOCKER_BUILDKIT=1 && docker build --platform=local -o . git://github.com/docker/buildx && mv buildx ~/.docker/cli-plugins/docker-buildx'
+          sh 'cd `pwd` && docker buildx build --platform linux/arm64 -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
     stage('push image') {
