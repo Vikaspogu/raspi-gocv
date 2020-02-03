@@ -25,7 +25,7 @@ spec:
       - name: DOCKER_TLS_CERTDIR
         value: ""
   - name: golang
-    image: vikaspogu/gocv
+    image: vikaspogu/gocv:latest
     command: ['cat']
     tty: true
   volumes:
