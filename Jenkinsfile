@@ -38,8 +38,9 @@ spec:
     stage('build image') {
       container('docker') {
           checkout scm
+          sh 'docker buildx --help'
           sh 'mkdir -p ~/.docker/cli-plugins && \
-              BUILDX_URL=$(curl https://api.github.com/repos/docker/buildx/releases/latest | jq -r '.assets[].browser_download_url' | grep arm64) && \
+              BUILDX_URL=$(curl "https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-arm64") && \
               wget $BUILDX_URL -O ~/.docker/cli-plugins/docker-buildx && \
               chmod +x ~/.docker/cli-plugins/docker-buildx'
           sh 'docker buildx --help'
