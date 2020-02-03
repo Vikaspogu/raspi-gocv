@@ -37,6 +37,7 @@ spec:
   node(POD_LABEL) {
     stage('build image') {
       container('docker') {
+          checkout scm
           sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
