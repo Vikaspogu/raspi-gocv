@@ -24,6 +24,10 @@ spec:
     env:
       - name: DOCKER_TLS_CERTDIR
         value: ""
+  - name: golang
+    image: vikaspogu/gocv
+    command: ['cat']
+    tty: true
   volumes:
   - name: jenkins-docker-cfg
     projected:
@@ -35,10 +39,14 @@ spec:
               path: config.json
 ''') {
   node(POD_LABEL) {
+    stage ('build app'){
+       checkout scm
+         container('golang'){
+           sh 'cd `pwd` && go build -o main .'
+         }
+    }
     stage('build image') {
-      checkout scm
       container('docker') {
-          sh 'docker run --rm --privileged multiarch/qemu-user-static:register --reset'
           sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
