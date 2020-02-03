@@ -7,6 +7,8 @@ spec:
   containers:
   - name: docker
     image: docker:19.03.1
+    securityContext:
+      privileged: true
     command:
     - sleep
     args:
@@ -38,12 +40,12 @@ spec:
     stage('build image') {
       checkout scm
       container('docker') {
-          sh 'cd `pwd` && docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
+          sh 'cd `pwd` && DOCKER_BUILDKIT=1 docker build -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
     }
     stage('push image') {
       container('docker') {
-          sh 'docker push docker.io/vikaspogu/rpi-node-cm'
+          sh 'DOCKER_BUILDKIT=1 docker push docker.io/vikaspogu/rpi-node-cm'
       }
     }
   }
