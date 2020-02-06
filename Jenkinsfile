@@ -6,7 +6,7 @@ spec:
     k3s.io/hostname: hp-mini
   containers:
   - name: docker
-    image: docker:19.03.1
+    image: docker:19.03.5
     command:
     - sleep
     args:
@@ -18,7 +18,7 @@ spec:
       - name: DOCKER_HOST
         value: tcp://localhost:2375
   - name: docker-daemon
-    image: docker:19.03.1-dind
+    image: docker:19.03.5-dind
     securityContext:
       privileged: true
     env:
@@ -36,15 +36,16 @@ spec:
 ''') {
   node(POD_LABEL) {
     stage('build image') {
+      checkout scm
       container('docker') {
-          checkout scm
-          sh 'export DOCKER_BUILDKIT=1 && docker build --platform=local -o . git://github.com/docker/buildx && mv buildx ~/.docker/cli-plugins/docker-buildx'
-          sh 'cd `pwd` && docker buildx build --platform linux/arm64 -t "docker.io/vikaspogu/rpi-node-cm" .'
+          sh 'DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=1  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
+          sh 'cd `pwd` && DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=1 docker build --platform linux/arm64 -t "docker.io/vikaspogu/rpi-node-cm" .'
       }
+
     }
     stage('push image') {
       container('docker') {
-          sh 'DOCKER_BUILDKIT=1 docker push docker.io/vikaspogu/rpi-node-cm'
+          sh 'DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=1 docker push docker.io/vikaspogu/rpi-node-cm'
       }
     }
   }
