@@ -6,7 +6,7 @@ pipeline {
   }
   stages {
     stage('build image') {
-      step{
+      steps{
         checkout scm
         container('docker') {
             sh 'DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=1  docker run --rm --privileged multiarch/qemu-user-static --reset -p yes'
@@ -15,14 +15,14 @@ pipeline {
       }
     }
     stage('push image') {
-      step{
+      steps{
         container('docker') {
           sh 'DOCKER_CLI_EXPERIMENTAL=enabled DOCKER_BUILDKIT=1 docker push docker.io/vikaspogu/rpi-node-cm'
         }
       }
     }
     stage('deployment'){
-      step{
+      steps{
         container('kubectl'){
           sh 'kubectl get pods'
         }
