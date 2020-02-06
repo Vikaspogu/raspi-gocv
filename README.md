@@ -1,4 +1,4 @@
-# Raspberry Pi Gocv
+# Raspberry Pi Go OpenCV
 
 ### Build ARM64 image on Docker with experimental feature enabled 
 
