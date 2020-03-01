@@ -24,7 +24,11 @@ spec:
         - name: DOCKER_TLS_CERTDIR
           value: ""
     - name: kubectl
-      image: bitnami/kubectl
+      image: roffe/kubectl
+      command:
+        - sleep
+      args:
+        - 99d
   volumes:
     - name: jenkins-docker-cfg
       projected:

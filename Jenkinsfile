@@ -29,7 +29,7 @@ pipeline {
     stage('deployment'){
       steps{
         container('kubectl'){
-          sh 'rollout restart deployment/rpi-node-cm -n raspi-gocv'
+          sh 'kubectl rollout restart deployment/rpi-node-cm -n raspi-gocv'
         }
       }
     }
