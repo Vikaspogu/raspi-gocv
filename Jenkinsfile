@@ -29,7 +29,7 @@ pipeline {
     stage("deployment"){
       steps{
         container("kubectl"){
-          sh "kubectl set image deployment/nginx-deployment rpi-node-cm=docker.io/vikaspogu/rpi-node-cm:${env.GIT_COMMIT} --record -n raspi-gocv"
+          sh "kubectl set image deployment/rpi-node-cm rpi-node-cm=docker.io/vikaspogu/rpi-node-cm:${env.GIT_COMMIT} --record -n raspi-gocv"
         }
       }
     }
