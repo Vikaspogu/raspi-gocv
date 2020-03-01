@@ -25,10 +25,6 @@ spec:
           value: ""
     - name: kubectl
       image: bitnami/kubectl
-      command:
-        - sleep
-      args:
-        - 99d
   volumes:
     - name: jenkins-docker-cfg
       projected:

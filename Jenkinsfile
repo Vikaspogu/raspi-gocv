@@ -4,6 +4,11 @@ pipeline {
       yamlFile 'kubernetes/jenkinsPod.yaml'
     }
   }
+  options {
+      buildDiscarder(logRotator(daysToKeepStr: "30", numToKeepStr: ""))
+      disableConcurrentBuilds()
+      timeout(time: 1, unit: "HOURS")
+  }
   stages {
     stage('build image') {
       steps{
@@ -24,7 +29,7 @@ pipeline {
     stage('deployment'){
       steps{
         container('kubectl'){
-          sh 'kubectl get pods'
+          sh 'rollout restart deployment/rpi-node-cm -n raspi-gocv'
         }
       }
     }
