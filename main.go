@@ -9,6 +9,7 @@ import (
 	"image"
 	"image/color"
 	"os"
+	"raspi-gocv/vault"
 )
 
 var (
@@ -17,8 +18,6 @@ var (
 	cam      *gocv.VideoCapture
 	stream   *mjpeg.Stream
 )
-
-const (MinimumArea = 3000)
 
 var (
 	username string
@@ -45,11 +44,10 @@ func main() {
 
 	log.Info("Capturing....")
 
-	//username, password = vault.ReadSecret("secret/data/demo/userinfo")
+	username, password = vault.ReadSecret("secret/data/demo/userinfo")
 
 	authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
-		//username: password,
-		"adminuser": "adminpass",
+		username: password,
 	}))
 
 	authorized.GET("/", func(c *gin.Context) {
