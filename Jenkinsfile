@@ -39,10 +39,10 @@ pipeline {
           cleanWs()
       }
       success {
-          slackSend color: 'good', message: '🚀 Build Success'
+          slackSend (color: 'good', message: "🚀 Build Success: ${env.JOB_NAME} ${env.BUILD_DISPLAY_NAME}")
       }
       failure {
-          slackSend color: 'danger', message: '🔥 Build Failure'
+          slackSend (color: 'danger', message: "🔥 Build Failure: ${env.JOB_NAME} ${env.BUILD_DISPLAY_NAME}")
       }
   }
 }
