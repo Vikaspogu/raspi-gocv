@@ -34,4 +34,15 @@ pipeline {
       }
     }
   }
+  post {
+      always {
+          cleanWs()
+      }
+      failure {
+          slackSend color: 'good', message: '🚀 Build Success'
+      }
+      success {
+          slackSend color: 'good', message: '🔥 Build Failure'
+      }
+  }
 }
