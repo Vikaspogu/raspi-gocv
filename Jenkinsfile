@@ -38,11 +38,11 @@ pipeline {
       always {
           cleanWs()
       }
-      failure {
+      success {
           slackSend color: 'good', message: '🚀 Build Success'
       }
-      success {
-          slackSend color: 'good', message: '🔥 Build Failure'
+      failure {
+          slackSend color: 'danger', message: '🔥 Build Failure'
       }
   }
 }
